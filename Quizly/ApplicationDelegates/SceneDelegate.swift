@@ -9,9 +9,17 @@ import UIKit
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     var window: UIWindow?
-
+    var coordinator: Coordinator?
+    
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
-        guard let _ = (scene as? UIWindowScene) else { return }
+        guard let scene = (scene as? UIWindowScene) else { return }
+        let window = UIWindow(windowScene: scene)
+        coordinator = TabBarCoordinator(
+            window: window,
+            networkService: NetworkService()
+//            dataService: DataService()
+        )
+        coordinator?.start()
     }
 
     func sceneDidDisconnect(_ scene: UIScene) { }
