@@ -30,7 +30,7 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		D8C2591B2DCA936A000B32EB /* Exceptions for "Quizly" folder in "Quizly" target */ = {
+		D800FFC72DDDB79B00258117 /* Exceptions for "Quizly" folder in "Quizly" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				ApplicationResources/Info.plist,
@@ -43,7 +43,7 @@
 		D8C258F22DCA9367000B32EB /* Quizly */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				D8C2591B2DCA936A000B32EB /* Exceptions for "Quizly" folder in "Quizly" target */,
+				D800FFC72DDDB79B00258117 /* Exceptions for "Quizly" folder in "Quizly" target */,
 			);
 			path = Quizly;
 			sourceTree = "<group>";
@@ -124,8 +124,6 @@
 				D8C258F22DCA9367000B32EB /* Quizly */,
 			);
 			name = Quizly;
-			packageProductDependencies = (
-			);
 			productName = Quizly;
 			productReference = D8C258F02DCA9367000B32EB /* Quizly.app */;
 			productType = "com.apple.product-type.application";
@@ -147,8 +145,6 @@
 				D8C2590C2DCA936A000B32EB /* QuizlyTests */,
 			);
 			name = QuizlyTests;
-			packageProductDependencies = (
-			);
 			productName = QuizlyTests;
 			productReference = D8C259092DCA936A000B32EB /* QuizlyTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
@@ -170,8 +166,6 @@
 				D8C259162DCA936A000B32EB /* QuizlyUITests */,
 			);
 			name = QuizlyUITests;
-			packageProductDependencies = (
-			);
 			productName = QuizlyUITests;
 			productReference = D8C259132DCA936A000B32EB /* QuizlyUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
