@@ -8,11 +8,11 @@
 import UIKit
 
 final class TabBarController: UITabBarController {
+    private let tabBarControllers: [UIViewController]
+    
     init(tabBarControllers: [UIViewController]) {
+        self.tabBarControllers = tabBarControllers
         super.init(nibName: nil, bundle: nil)
-        for tab in tabBarControllers {
-            addChild(tab)
-        }
     }
 
     @available(*, unavailable)
@@ -22,5 +22,8 @@ final class TabBarController: UITabBarController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        for tab in tabBarControllers {
+            addChild(tab)
+        }
     }
 }

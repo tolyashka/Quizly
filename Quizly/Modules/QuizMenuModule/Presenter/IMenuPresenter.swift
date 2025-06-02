@@ -14,5 +14,6 @@ protocol CategoryMenuLifeCycle: AnyObject {
 }
 
 protocol CategoryMenuHandler: AnyObject {
-    func chooseCategory() 
+    func chooseCategory()
+    func startQuizSession()
 }

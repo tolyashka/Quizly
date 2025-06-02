@@ -14,10 +14,16 @@ enum QuestionSection: String, CaseIterable, Codable {
     case difficultType
 }
 
+struct QueryItem: Hashable, Codable {
+    let name: String
+    let value: String?
+}
+
 struct QuestionItemViewModel: Hashable, Codable {
     var id = UUID()
     let title: String
     let isSelected: Bool
+    let queryItem: QueryItem?
 }
 
 struct QuestionSectionViewModel: Hashable, Codable {

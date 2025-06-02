@@ -20,15 +20,15 @@ fileprivate enum TabBarTitle: String {
 final class TabBarCoordinator: Coordinator {
     var parentCoordinator: Coordinator?
     var childCoordinators = [Coordinator]()
+    
     private var window: UIWindow
-    private let networkService: INetworkService
+    private let networkManager: INetworkManager
     private var tabBarController: TabBarController?
     
-    // MARK: - Init
-    
-    init(window: UIWindow, networkService: INetworkService) {
+    // MARK: - Initialize main coordinator
+    init(window: UIWindow, networkManager: INetworkManager) {
         self.window = window
-        self.networkService = networkService
+        self.networkManager = networkManager
     }
     
     func start() {
@@ -43,7 +43,6 @@ private extension TabBarCoordinator {
         let historyListCoordinator = makeHistoryListCoordinator()
         let coordinators: [Coordinator] = [playCoordinator, historyListCoordinator]
         
-        // FIXME: Посмотреть позже и возможно переделать
         childCoordinators.append(contentsOf: coordinators)
         
         setupTabBarController(with: [
@@ -59,8 +58,9 @@ private extension TabBarCoordinator {
             image: UIImage(systemName: TabBarImageView.play.rawValue),
             selectedImage: UIImage(systemName: TabBarImageView.play.rawValue)
         )
+        navController.setNavigationBarHidden(true, animated: false)
         
-        let coordinator = PlayMenuCoordinator(navigationController: navController, networkService: networkService)
+        let coordinator = PlayMenuCoordinator(navigationController: navController, networkManager: networkManager)
         coordinator.parentCoordinator = self
         coordinator.start()
         return coordinator
@@ -73,6 +73,7 @@ private extension TabBarCoordinator {
             image: UIImage(systemName: TabBarImageView.history.rawValue),
             selectedImage: UIImage(systemName: TabBarImageView.history.rawValue)
         )
+        navController.setNavigationBarHidden(true, animated: false)
         
         let coordinator = HistoryListCoordinator(navigationController: navController)
         coordinator.parentCoordinator = self

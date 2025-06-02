@@ -23,7 +23,6 @@ final class HistoryListCoordinator: Coordinator {
     func goBack() {
         finish()
         navigationController.popToRootViewController(animated: true)
-        print(navigationController)
     }
     
     func showImagePicker(with imagePicker: UIImagePickerController) {
@@ -41,6 +40,6 @@ final class HistoryListCoordinator: Coordinator {
 
 private extension HistoryListCoordinator {
     func showModule() {
-
+        // !!!!! 
     }
 }

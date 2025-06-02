@@ -15,7 +15,8 @@ class MenuViewController: UIViewController {
     private let presenter: IMenuPresenter
     
     private lazy var categoryView: CategoryView = {
-        let categoryView = CategoryView(presenter: presenter)
+        let categoryView = CategoryView()
+        categoryView.delegate = self
         categoryView.translatesAutoresizingMaskIntoConstraints = false
         return categoryView
     }()
@@ -48,9 +49,10 @@ class MenuViewController: UIViewController {
         button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 20)
         button.setTitleColor(.darkGray, for: .normal)
         button.setContentHuggingPriority(.defaultLow, for: .horizontal)
+        button.addTarget(self, action: #selector(startQuizSession), for: .touchUpInside)
         return button
     }()
-
+    
     private lazy var buttonsStackView: UIStackView = {
         let stackView = UIStackView()
         stackView.axis = .horizontal
@@ -80,10 +82,20 @@ class MenuViewController: UIViewController {
         super.viewDidAppear(animated)
         setDefaultShadow()
     }
+    
+    @objc private func startQuizSession() {
+        presenter.startQuizSession()
+    }
 }
 
 extension MenuViewController: IStartMenuView {
     
+}
+
+extension MenuViewController: CategoryViewDelegate {
+    func categoryViewDidTap(_ view: ICategoryView) {
+        presenter.chooseCategory()
+    }
 }
 
 // MARK: - Configure views

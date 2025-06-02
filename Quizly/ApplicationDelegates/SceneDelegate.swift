@@ -16,7 +16,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let window = UIWindow(windowScene: scene)
         coordinator = TabBarCoordinator(
             window: window,
-            networkService: NetworkService()
+            networkManager: NetworkManager(networkClient: NetworkClient(), url: "https://opentdb.com/api.php?amount=10") // !!!!
 //            dataService: DataService()
         )
         coordinator?.start()
