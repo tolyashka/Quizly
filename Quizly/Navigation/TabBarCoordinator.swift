@@ -41,13 +41,13 @@ private extension TabBarCoordinator {
     func showTabBarFlow() {
         let playCoordinator = makePlayCoordinator()
         let historyListCoordinator = makeHistoryListCoordinator()
-        let coordinators: [Coordinator] = [playCoordinator, historyListCoordinator]
+        let coordinators: [Coordinator] = [playCoordinator/*, historyListCoordinator*/]
         
         childCoordinators.append(contentsOf: coordinators)
         
         setupTabBarController(with: [
             playCoordinator.navigationController,
-            historyListCoordinator.navigationController
+//            historyListCoordinator.navigationController
         ])
     }
     
