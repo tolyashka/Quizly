@@ -1,4 +1,4 @@
-![P0078_instance_id_RGB](https://github.com/user-attachments/assets/55121e5d-9968-4d14-a00d-b35cc2419e62)# QUIZLY
+# QUIZLY
 
 ## Описание
 
