@@ -8,10 +8,10 @@
 import UIKit
 
 protocol IStartMenuView: AnyObject {
-    
+    func update(questionConfiguration: [QuestionSection: QuestionItemViewModel]?)
 }
 
-class MenuViewController: UIViewController {
+final class MenuViewController: UIViewController {
     private let presenter: IMenuPresenter
     
     private lazy var categoryView: CategoryView = {
@@ -26,7 +26,7 @@ class MenuViewController: UIViewController {
         let label = UILabel()
         label.textColor = .systemYellow
         label.font = .boldSystemFont(ofSize: 52)
-        label.text = "Quizly" // !
+        label.text = QuizMenuConstants.MenuViewConstants.titleApp.rawValue
         label.textAlignment = .center
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -34,7 +34,7 @@ class MenuViewController: UIViewController {
     
     private lazy var settingsButton: UIButton = {
         let button = UIButton(configuration: .plain(), primaryAction: nil)
-        button.setImage(UIImage(systemName: "gearshape"), for: .normal) // !
+        button.setImage(UIImage(systemName: QuizMenuConstants.MenuViewConstants.settingsButtonPin.rawValue), for: .normal) // !
         button.backgroundColor = .systemYellow
         button.layer.cornerRadius = 20
         button.setContentHuggingPriority(.required, for: .horizontal)
@@ -44,7 +44,7 @@ class MenuViewController: UIViewController {
     private lazy var playButton: UIButton = {
         let button = UIButton()
         button.backgroundColor = .systemYellow
-        button.setTitle("Играть", for: .normal) // !!
+        button.setTitle(QuizMenuConstants.MenuViewConstants.playButton.rawValue, for: .normal) // !!
         button.layer.cornerRadius = 20
         button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 20)
         button.setTitleColor(.darkGray, for: .normal)
@@ -75,6 +75,7 @@ class MenuViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        presenter.viewDidLoad(view: self)
         configureViews()
     }
     
@@ -89,7 +90,9 @@ class MenuViewController: UIViewController {
 }
 
 extension MenuViewController: IStartMenuView {
-    
+    func update(questionConfiguration: [QuestionSection: QuestionItemViewModel]?) {
+        categoryView.configure(category: questionConfiguration)
+    }
 }
 
 extension MenuViewController: CategoryViewDelegate {
@@ -126,7 +129,7 @@ private extension MenuViewController {
             categoryView.topAnchor.constraint(equalTo: titleAppLabel.bottomAnchor, constant: 65),
             categoryView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 40),
             categoryView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -40),
-            categoryView.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.1),
+            categoryView.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.2),
             
             buttonsStackView.topAnchor.constraint(equalTo: categoryView.bottomAnchor, constant: 25),
             buttonsStackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 40),

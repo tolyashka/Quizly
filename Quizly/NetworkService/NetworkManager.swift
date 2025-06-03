@@ -5,35 +5,37 @@
 //  Created by Анатолий Лушников on 01.06.2025.
 //
 
-import Foundation
-
 protocol INetworkManager: AnyObject {
     func fetchQuestions(
         completionHandler: @escaping (QuestionModel) -> Void
     )
+    func createURLConfiguration(with configuration: [QueryItem]?)
 }
 
-class NetworkManager: INetworkManager {
+final class NetworkManager: INetworkManager {
     private typealias NetworkResult = Result<QuestionModel, NetworkError>
     
     private let networkClient: INetworkClient
-    private let url: String
+    private let urlConfigurator: IURLConfigurator
     
-    init(networkClient: INetworkClient, url: String) {
+    init(networkClient: INetworkClient,
+         urlConfigurator: IURLConfigurator
+    ) {
         self.networkClient = networkClient
-        self.url = url
+        self.urlConfigurator = urlConfigurator
+    }
+    
+    func createURLConfiguration(with configuration: [QueryItem]?) {
+        urlConfigurator.updateURL(with: configuration)
     }
     
     func fetchQuestions(completionHandler: @escaping (QuestionModel) -> Void) {
-        networkClient.get(urlString: url) { (result: NetworkResult) in
-//            guard let self else { return }
-            
+        networkClient.get(url: urlConfigurator.url) { (result: NetworkResult) in
             switch result {
             case .success(let questionModel):
-                
                 completionHandler(questionModel)
             case .failure(let error):
-                print("Network manager error - ", error.localizedDescription)
+                print(error.localizedDescription)
             }
         }
     }

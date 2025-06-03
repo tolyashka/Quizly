@@ -24,7 +24,7 @@ final class QuizResultViewController: UIViewController {
 
     private let backButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("Перейти в меню", for: .normal)
+        button.setTitle(QuizResultConstants.QuizResulViewtConstants.back.rawValue, for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 18, weight: .medium)
         button.backgroundColor = .systemYellow
         button.tintColor = .black

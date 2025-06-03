@@ -13,8 +13,7 @@ final class PlayMenuCoordinator: Coordinator {
     let networkManager: INetworkManager
     
     // MARK: - Initialize PlayMenuCoordinator
-    // Network manager for uploading questions when you click on a button
-
+    
     init(navigationController: UINavigationController, networkManager: INetworkManager) {
         self.navigationController = navigationController
         self.networkManager = networkManager
@@ -31,6 +30,11 @@ final class PlayMenuCoordinator: Coordinator {
         configurationQuestionCoordinator.start()
     }
     
+    func updateQuestionsConfigurations(with configurations: [QuestionSection: QuestionItemViewModel]?) {
+        let resultConfiguration = configurations?.values.compactMap { $0.queryItem }
+        networkManager.createURLConfiguration(with: resultConfiguration)
+    }
+
     func startQuizSession() {
         networkManager.fetchQuestions { [weak self] questionModel in
             guard let self else { return }
@@ -51,7 +55,7 @@ final class PlayMenuCoordinator: Coordinator {
 // MARK: - Presentation play module
 private extension PlayMenuCoordinator {
     func showModule() {
-        let presenter = MenuPresenter(coordinator: self, networkManager: networkManager)
+        let presenter = MenuPresenter(coordinator: self)
         let viewController = MenuViewController(presenter: presenter)
         navigationController.pushViewController(viewController, animated: true)
     }

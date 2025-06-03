@@ -58,8 +58,6 @@ final class QuizViewController: UIViewController {
         label.font = .systemFont(ofSize: 22)
         label.textAlignment = .center
         label.numberOfLines = 0
-        label.layer.borderColor = UIColor.black.cgColor
-        label.layer.borderWidth = 1
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -124,11 +122,12 @@ private extension QuizViewController {
     func createButton(with answers: [String]) {
         answerButtons = []
         for (index, answer) in answers.enumerated() {
-            let button = UIButton(type: .system)
+            let button = UIButton()
             button.setTitle(answer, for: .normal)
-            button.titleLabel?.font = .systemFont(ofSize: 18)
+            button.setTitleColor(.black, for: .normal)
+            button.titleLabel?.font = .boldSystemFont(ofSize: 18)
             button.tag = index
-            button.backgroundColor = .systemYellow.withAlphaComponent(0.55)
+            button.backgroundColor = .systemYellow
             button.layer.cornerRadius = 15
             button.addTarget(self, action: #selector(answerTapped), for: .touchUpInside)
             answerButtons.append(button)

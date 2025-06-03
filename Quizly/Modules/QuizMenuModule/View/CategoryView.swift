@@ -9,7 +9,7 @@ import UIKit
 protocol ICategoryView: AnyObject {
     var delegate: CategoryViewDelegate? { get }
     
-    func configure(category: [QuestionSection: QuestionItemViewModel])
+    func configure(category: [QuestionSection: QuestionItemViewModel]?)
 }
 
 final class CategoryView: UIView {
@@ -35,7 +35,7 @@ final class CategoryView: UIView {
     
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
-        label.text = MenuModuleConstants.CategoryView.titleCategory.rawValue
+        label.text = QuizMenuConstants.CategoryConstants.titleCategory.rawValue
         label.font = UIFont.systemFont(ofSize: 16)
         label.textColor = .gray
         return label
@@ -44,13 +44,17 @@ final class CategoryView: UIView {
     private lazy var categoryLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.boldSystemFont(ofSize: 20)
+        label.numberOfLines = 0
         label.textColor = .darkGray
         return label
     }()
     
     private lazy var arrowImageView: UIImageView = {
         let config = UIImage.SymbolConfiguration(pointSize: 16, weight: .medium)
-        let image = UIImage(systemName: MenuModuleConstants.CategoryView.nextPresenrationImage.rawValue, withConfiguration: config)
+        let image = UIImage(
+            systemName: QuizMenuConstants.CategoryConstants.nextPresenrationImage.rawValue,
+            withConfiguration: config
+        )
         let imageView = UIImageView(image: image)
         imageView.tintColor = .darkGray
         imageView.contentMode = .center
@@ -94,13 +98,18 @@ final class CategoryView: UIView {
 
 // MARK: - ICategoryView protocol implementation
 extension CategoryView: ICategoryView {
-    func configure(category categories: [QuestionSection: QuestionItemViewModel]) {
+    func configure(category categories: [QuestionSection: QuestionItemViewModel]?) {
+        guard let categories else {
+            categoryLabel.text = QuizMenuConstants.CategoryConstants.defaultCategory.rawValue
+            return
+        }
+        
         var categoryTitle = String()
         
         for item in categories.values {
             categoryTitle += item.title + "\n"
         }
-        
+
         categoryLabel.text = categoryTitle
     }
 }

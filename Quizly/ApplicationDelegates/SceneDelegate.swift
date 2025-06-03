@@ -7,7 +7,8 @@
 
 import UIKit
 
-class SceneDelegate: UIResponder, UIWindowSceneDelegate {
+final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
+    private let baseURL = "https://opentdb.com/api.php?" // <----- ou, cringe...
     var window: UIWindow?
     var coordinator: Coordinator?
     
@@ -16,7 +17,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let window = UIWindow(windowScene: scene)
         coordinator = TabBarCoordinator(
             window: window,
-            networkManager: NetworkManager(networkClient: NetworkClient(), url: "https://opentdb.com/api.php?amount=10") // !!!!
+            networkManager: NetworkManager(networkClient: NetworkClient(),
+            urlConfigurator: URLConfigurator(urlString: baseURL)) // !!!!
 //            dataService: DataService()
         )
         coordinator?.start()

@@ -8,31 +8,33 @@
 import Foundation
 
 protocol IURLConfigurator: AnyObject {
-//    func updateURL(with string: String)
-    func createURL(with urlString: String, queryConfiguration: [QueryItem]) -> URL?
+    var url: URL?{ get }
+    
+    func updateURL(with queryConfiguration: [QueryItem]?)
+    func switchURL(with urlString: String)
 }
 
-class URLConfigurator: IURLConfigurator, AnyObject {
-//    private var urlString: String
+final class URLConfigurator: IURLConfigurator, AnyObject {
+    private(set) var url: URL?
+    private var urlString: String
     
-//    init(mainURL: String) {
-//        self.urlString = mainURL
-//    }
-//    
-//    func updateURL(with string: String) {
-//        self.urlString = string
-//    }
+    init(urlString: String) {
+        self.urlString = urlString
+    }
     
-    func createURL(with urlString: String, queryConfiguration: [QueryItem]) -> URL? {
+    func switchURL(with urlString: String) {
+        self.urlString = urlString
+    }
+    
+    func updateURL(with queryConfiguration: [QueryItem]?) {
         guard var urlComponents = URLComponents(string: urlString) else {
-            return nil
+            return
         }
         
-        urlComponents.queryItems = queryConfiguration.map {
+        urlComponents.queryItems = queryConfiguration?.compactMap {
             URLQueryItem(name: $0.name, value: $0.value)
         }
         
-        return urlComponents.url
+        url = urlComponents.url
     }
-    
 }

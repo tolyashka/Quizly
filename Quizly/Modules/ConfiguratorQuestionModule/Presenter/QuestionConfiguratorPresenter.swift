@@ -7,7 +7,7 @@
 
 import UIKit
 
-class QuestionConfiguratorPresenter {
+final class QuestionConfiguratorPresenter {
     typealias SectionItemConfiguration = [QuestionSection: QuestionItemViewModel]
     
     private var dataSource: UICollectionViewDiffableDataSource<QuestionSection, QuestionItemViewModel>?
@@ -140,7 +140,6 @@ private extension QuestionConfiguratorPresenter {
     }
     
     func updateSelectedItems() {
-        // FIXME: - Подумать еще, как можно улучшить это вложенное убожество
 //        let selectedItems = sections.map { $0.items.filter { $0.isSelected }
         let selectedItems = sections.flatMap { section in
             let selectedItems = section.items.filter { $0.isSelected }

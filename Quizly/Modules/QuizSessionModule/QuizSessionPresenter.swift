@@ -22,6 +22,7 @@ final class QuizSessionPresenter {
     private let questionOffset = 1
     private var correctAnswerIndex: Int?
     private var correctAnswersCount = 0
+    
     init(coordinator: Coordinator, questionModel: QuestionModel) {
         self.questionModel = questionModel
         self.coordinator = coordinator

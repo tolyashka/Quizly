@@ -7,12 +7,12 @@
 
 import UIKit
 
-class QuestionConfiguratorViewController: UIViewController {
+final class QuestionConfiguratorViewController: UIViewController {
     private let presenter: IQuestionConfiguratorPresenter
     
     private lazy var saveConfigurationButton: UIButton = {
         let button = UIButton()
-        button.setTitle("Сохранить", for: .normal)
+        button.setTitle(ConfigurationConstants.ViewConstant.saveConfiguration.rawValue, for: .normal)
         button.setTitleColor(.systemBlue, for: .normal)
         button.layer.cornerRadius = 15
         button.layer.borderWidth = 1

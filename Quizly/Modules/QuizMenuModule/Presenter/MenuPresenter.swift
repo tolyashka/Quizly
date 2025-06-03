@@ -8,19 +8,24 @@
 import UIKit
 
 final class MenuPresenter {
+    typealias QuestionConfiguration = [QuestionSection: QuestionItemViewModel]
+    
     private weak var view: IStartMenuView?
     private weak var coordinator: Coordinator?
-    private let networkManager: INetworkManager
     
-    init(coordinator: Coordinator, networkManager: INetworkManager) {
+    private var questionConfiguration: QuestionConfiguration? {
+        ConfigurationStorage.shared.get(type: QuestionConfiguration.self, forKey: .selectedItems)
+    }
+    
+    init(coordinator: Coordinator) {
         self.coordinator = coordinator
-        self.networkManager = networkManager
     }
 }
 
 extension MenuPresenter: IMenuPresenter {
     func viewDidLoad(view: IStartMenuView) {
         self.view = view
+        self.view?.update(questionConfiguration: questionConfiguration)
     }
     
     func chooseCategory() {
@@ -30,6 +35,7 @@ extension MenuPresenter: IMenuPresenter {
     
     func startQuizSession() {
         let coordinator = coordinator as? PlayMenuCoordinator
+        coordinator?.updateQuestionsConfigurations(with: questionConfiguration)
         coordinator?.startQuizSession()
     }
 }

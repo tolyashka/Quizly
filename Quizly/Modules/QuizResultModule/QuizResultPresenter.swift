@@ -13,6 +13,7 @@ protocol IQuizResultPresenter {
 }
 
 final class QuizResultPresenter: IQuizResultPresenter {
+    private let percentCount = 100.0
     private let quizResultModel: QuizResultModel
     private weak var view: IQuizResultView?
     private let coordinator: Coordinator
@@ -24,8 +25,14 @@ final class QuizResultPresenter: IQuizResultPresenter {
 
     func viewDidLoad(_ view: IQuizResultView) {
         self.view = view
-        let percent = Int((Double(quizResultModel.score) / Double(quizResultModel.total)) * 100)
-        view.showScoreText("Результат: \(quizResultModel.score)/\(quizResultModel.total) (\(percent)%)")
+        let percent = Int((Double(quizResultModel.score) / Double(quizResultModel.total)) * percentCount)
+        view.showScoreText(
+            QuizResultConstants.ResultPresenter.showScoreText(
+                score: quizResultModel.score,
+                total: quizResultModel.total,
+                percent: percent
+            ).title
+        )
     }
 
     func didTapBack() {
