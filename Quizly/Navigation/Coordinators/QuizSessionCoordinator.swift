@@ -13,10 +13,12 @@ final class QuizSessionCoordinator: Coordinator {
     
     private let navigationController: UINavigationController
     private let questionModel: QuestionModel
+    private let dataService: IDataService
     
-    init(navigationController: UINavigationController, questionModel: QuestionModel) {
+    init(navigationController: UINavigationController, questionModel: QuestionModel, dataService: IDataService) {
         self.navigationController = navigationController
         self.questionModel = questionModel
+        self.dataService = dataService
     }
     
     func start() {
@@ -29,13 +31,13 @@ final class QuizSessionCoordinator: Coordinator {
     }
     
     func showQuizResult(quizResultModel: QuizResultModel) {
-        let presenter = QuizResultPresenter(quizResultModel: quizResultModel, coordinator: self)
+        let presenter = QuizResultPresenter(quizResultModel: quizResultModel, dataService: dataService, coordinator: self)
         let viewController = QuizResultViewController(presenter: presenter)
         navigationController.pushViewController(viewController, animated: true)
     }
     
     func finishQuiz() {
-        navigationController.popToRootViewController(animated: true)
+        dismiss()
     }
 }
 

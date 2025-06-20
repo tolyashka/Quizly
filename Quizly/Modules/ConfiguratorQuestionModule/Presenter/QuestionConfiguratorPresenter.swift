@@ -11,10 +11,11 @@ final class QuestionConfiguratorPresenter {
     typealias SectionItemConfiguration = [QuestionSection: QuestionItemViewModel]
     
     private var dataSource: UICollectionViewDiffableDataSource<QuestionSection, QuestionItemViewModel>?
-    private let coordinator: Coordinator
-    private var view: IQuestionConfiguratorView?
+    private weak var coordinator: Coordinator?
+    private weak var view: IQuestionConfiguratorView?
     private let model: IQuestionSectionFactory
     private let configuratorStorage: IConfigurationStorage
+    // SELECTED ITEMS поменять под класс
     private var selectedItems: SectionItemConfiguration = [:]
     private lazy var sections = model.makeSections()
     

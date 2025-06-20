@@ -13,30 +13,44 @@ protocol IQuizResultPresenter {
 }
 
 final class QuizResultPresenter: IQuizResultPresenter {
-    private let percentCount = 100.0
     private let quizResultModel: QuizResultModel
     private weak var view: IQuizResultView?
-    private let coordinator: Coordinator
-
-    init(quizResultModel: QuizResultModel, coordinator: Coordinator) {
+    private weak var coordinator: Coordinator?
+    private let dataService: IDataService
+    
+    init(quizResultModel: QuizResultModel, dataService: IDataService ,coordinator: Coordinator) {
         self.quizResultModel = quizResultModel
         self.coordinator = coordinator
+        self.dataService = dataService
     }
 
     func viewDidLoad(_ view: IQuizResultView) {
         self.view = view
-        let percent = Int((Double(quizResultModel.score) / Double(quizResultModel.total)) * percentCount)
         view.showScoreText(
             QuizResultConstants.ResultPresenter.showScoreText(
                 score: quizResultModel.score,
                 total: quizResultModel.total,
-                percent: percent
+                percent: quizResultModel.percent
             ).title
         )
+        saveResults()
     }
 
     func didTapBack() {
         let coordinator = coordinator as? QuizSessionCoordinator
         coordinator?.finishQuiz()
+    }
+    
+    private func saveResults() {
+        print("В result")
+//        dataService.fetchAllQuestionConfigurators { result in
+//            print(result)
+//        }
+        
+        dataService.saveQuizResult(quizResultModel)
+        
+        print("Читаю данные:")
+        print(dataService.fetchAllQuestionConfigs())
+        print(dataService.fetchLatestResult())
     }
 }

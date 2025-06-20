@@ -12,13 +12,15 @@ final class MenuPresenter {
     
     private weak var view: IStartMenuView?
     private weak var coordinator: Coordinator?
+    private let dataService: IDataService
     
     private var questionConfiguration: QuestionConfiguration? {
         ConfigurationStorage.shared.get(type: QuestionConfiguration.self, forKey: .selectedItems)
     }
     
-    init(coordinator: Coordinator) {
+    init(coordinator: Coordinator, dataService: IDataService) {
         self.coordinator = coordinator
+        self.dataService = dataService
     }
 }
 
@@ -33,9 +35,24 @@ extension MenuPresenter: IMenuPresenter {
         coordinator?.showConfigurationQuestionDetail()
     }
     
-    func startQuizSession() {
-        let coordinator = coordinator as? PlayMenuCoordinator
-        coordinator?.updateQuestionsConfigurations(with: questionConfiguration)
-        coordinator?.startQuizSession()
+    func startQuizSession() { // !!!!! 
+        let config = QuestionConfigModel(
+            id: UUID(),
+            title: "История",
+            difficultyLevel: "Hard",
+            countQuestions: 10,
+            answerType: "Single"
+        )
+        dataService.deleteAllQuizResults()
+        dataService.deleteAllQuestionConfigs()
+        dataService.setActiveConfig(config)
+        print("1", dataService.fetchQuizResults(forConfigWithID: config.id))
+        print("2", dataService.fetchAllQuestionConfigs())
+        print("3", dataService.fetchLatestResult())
+        
+        
+        let coordinator = coordinator as? PlayMenuCoordinator // !!!!!!!!!!!!!!
+        coordinator?.updateQuestionsConfigurations(with: questionConfiguration) // !!!!!!!!!
+        coordinator?.showQuestionLoadModule() // !!!!!!!!!!!!!!!!!!
     }
 }

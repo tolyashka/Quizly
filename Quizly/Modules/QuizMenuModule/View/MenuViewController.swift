@@ -21,7 +21,6 @@ final class MenuViewController: UIViewController {
         return categoryView
     }()
     
-    // FIXME: Поменять тексты на константы
     private lazy var titleAppLabel: UILabel = {
         let label = UILabel()
         label.textColor = .systemYellow
@@ -66,6 +65,10 @@ final class MenuViewController: UIViewController {
     init(presenter: IMenuPresenter) {
         self.presenter = presenter
         super.init(nibName: nil, bundle: nil)
+    }
+    
+    deinit {
+        print("deinit MenuViewController")
     }
     
     @available(*, unavailable)

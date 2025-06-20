@@ -16,8 +16,9 @@ protocol IQuizSessionPresenter: AnyObject {
 final class QuizSessionPresenter {
     private weak var view: IQuizSessionView?
     private let questionModel: QuestionModel
-    private let coordinator: Coordinator
-    private let delayForChangedQuestion = 1.5
+    private weak var coordinator: Coordinator?
+    // FIXME: под конфигурацию вопроса тоже отдельную структуру 
+    private let delayForChangedQuestion = 1.0
     private var questionIndex = 0
     private let questionOffset = 1
     private var correctAnswerIndex: Int?
@@ -59,7 +60,9 @@ private extension QuizSessionPresenter {
     func loadQuestion() {
         guard questionIndex < questionModel.results.count else {
             let coordinator = coordinator as? QuizSessionCoordinator
-            let quizResultModel = QuizResultModel(score: correctAnswersCount, total: questionModel.questionsCount)
+            
+            let resultPercent = calculatePercentage(correctAnswers: correctAnswersCount, totalAnswers: questionModel.questionsCount)
+            let quizResultModel = QuizResultModel(date: Date(), score: correctAnswersCount, total: questionModel.questionsCount, percent: resultPercent)
             coordinator?.showQuizResult(quizResultModel: quizResultModel)
             return
         }
@@ -79,5 +82,11 @@ private extension QuizSessionPresenter {
             self.questionIndex += self.questionOffset
             self.loadQuestion()
         }
+    }
+    
+    func calculatePercentage(correctAnswers: Int, totalAnswers: Int) -> Double {
+        let percentageDivisor = 100.0
+        let resultPercent = (Double(correctAnswers) / Double(totalAnswers)) * percentageDivisor
+        return resultPercent
     }
 }

@@ -12,8 +12,11 @@ final class HistoryListCoordinator: Coordinator {
     var childCoordinators: [Coordinator] = []
     let navigationController: UINavigationController
     
-    init(navigationController: UINavigationController) {
+    private let dataService: IDataService
+    
+    init(navigationController: UINavigationController, dataService: IDataService) {
         self.navigationController = navigationController
+        self.dataService = dataService
     }
     
     func start() {
@@ -24,22 +27,12 @@ final class HistoryListCoordinator: Coordinator {
         finish()
         navigationController.popToRootViewController(animated: true)
     }
-    
-    func showImagePicker(with imagePicker: UIImagePickerController) {
-        navigationController.present(imagePicker, animated: true)
-    }
-    
-    func dismissImagePicker() {
-        navigationController.topViewController?.dismiss(animated: true)
-    }
-    
-    func presentView(with activity: UIActivityViewController) {
-        navigationController.present(activity, animated: true)
-    }
 }
 
 private extension HistoryListCoordinator {
     func showModule() {
-        // !!!!! 
+        let presenter = HistoryGameSessionPresenter(coordinator: self, dataService: dataService)
+        let viewController = HistoryGameSessionViewController(presenter: presenter)
+        navigationController.pushViewController(viewController, animated: true)
     }
 }
