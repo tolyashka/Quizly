@@ -49,21 +49,6 @@ final class PlayMenuCoordinator: Coordinator {
         childCoordinators.append(coordinator)
         coordinator.start()
     }
-//    func startQuizSession() {
-//        networkManager.fetchQuestions { [weak self] questionModel in
-//            guard let self else { return }
-//            DispatchQueue.main.async {
-//                self.detailsQuizSession(with: questionModel)
-//            }
-//        }
-//    }
-    
-//    private func detailsQuizSession(with questionModel: QuestionModel) {
-//        let quizSessionCoordinator = QuizSessionCoordinator(navigationController: navigationController, questionModel: questionModel)
-//        quizSessionCoordinator.parentCoordinator = self
-//        childCoordinators.append(quizSessionCoordinator)
-//        quizSessionCoordinator.start()
-//    }
 }
 
 // MARK: - Presentation play module

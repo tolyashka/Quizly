@@ -15,7 +15,7 @@ protocol IQuizResultPresenter {
 final class QuizResultPresenter: IQuizResultPresenter {
     private let quizResultModel: QuizResultModel
     private weak var view: IQuizResultView?
-    private weak var coordinator: Coordinator?
+    private let coordinator: Coordinator
     private let dataService: IDataService
     
     init(quizResultModel: QuizResultModel, dataService: IDataService ,coordinator: Coordinator) {
@@ -42,15 +42,6 @@ final class QuizResultPresenter: IQuizResultPresenter {
     }
     
     private func saveResults() {
-        print("В result")
-//        dataService.fetchAllQuestionConfigurators { result in
-//            print(result)
-//        }
-        
         dataService.saveQuizResult(quizResultModel)
-        
-        print("Читаю данные:")
-        print(dataService.fetchAllQuestionConfigs())
-        print(dataService.fetchLatestResult())
     }
 }

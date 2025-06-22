@@ -16,7 +16,7 @@ protocol IQuizSessionPresenter: AnyObject {
 final class QuizSessionPresenter {
     private weak var view: IQuizSessionView?
     private let questionModel: QuestionModel
-    private weak var coordinator: Coordinator?
+    private var coordinator: Coordinator?
     // FIXME: под конфигурацию вопроса тоже отдельную структуру 
     private let delayForChangedQuestion = 1.0
     private var questionIndex = 0

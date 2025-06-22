@@ -1,8 +1,8 @@
 //
-//  CoreDataClass.swift
+//  QuizResult+CoreDataClass.swift
 //  Quizly
 //
-//  Created by Анатолий Лушников on 16.06.2025.
+//  Created by Анатолий Лушников on 21.06.2025.
 //
 
 import Foundation

@@ -16,8 +16,17 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let scene = (scene as? UIWindowScene) else { return }
         let window = UIWindow(windowScene: scene)
         let navigationController = UINavigationController()
+        
+        let configService = QuestionConfigService(configuratorManager: ConfiguratorManager())
+        let configProvider = ActiveConfigProvider(configService: configService)
+        let resultService = QuizResultService(configProvider: configProvider)
+
+        let dataService = DataService(configService: configService, resultService: resultService)
+
         let networkManager = NetworkManager(networkClient: NetworkClient(), urlConfigurator: URLConfigurator(urlString: baseURL))
-        coordinator = ApplicaionCoordinator(window: window, navigationController: navigationController, networkManager: networkManager, dataService: DataService())
+        
+        coordinator = ApplicaionCoordinator(window: window, navigationController: navigationController, networkManager: networkManager, dataService: dataService)
+        
         coordinator?.start()
     }
     

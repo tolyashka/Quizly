@@ -11,7 +11,7 @@ final class MenuPresenter {
     typealias QuestionConfiguration = [QuestionSection: QuestionItemViewModel]
     
     private weak var view: IStartMenuView?
-    private weak var coordinator: Coordinator?
+    private var coordinator: Coordinator?
     private let dataService: IDataService
     
     private var questionConfiguration: QuestionConfiguration? {
@@ -35,21 +35,16 @@ extension MenuPresenter: IMenuPresenter {
         coordinator?.showConfigurationQuestionDetail()
     }
     
-    func startQuizSession() { // !!!!! 
+    func startQuizSession() { // !!!!!
         let config = QuestionConfigModel(
             id: UUID(),
-            title: "История",
-            difficultyLevel: "Hard",
+            title: "title",
+            difficultyLevel: "confifugration",
             countQuestions: 10,
             answerType: "Single"
         )
-        dataService.deleteAllQuizResults()
-        dataService.deleteAllQuestionConfigs()
-        dataService.setActiveConfig(config)
-        print("1", dataService.fetchQuizResults(forConfigWithID: config.id))
-        print("2", dataService.fetchAllQuestionConfigs())
-        print("3", dataService.fetchLatestResult())
-        
+        dataService.saveQuestionConfig(config)
+        dataService.setActiveConfigID(config.id)
         
         let coordinator = coordinator as? PlayMenuCoordinator // !!!!!!!!!!!!!!
         coordinator?.updateQuestionsConfigurations(with: questionConfiguration) // !!!!!!!!!
