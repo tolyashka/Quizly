@@ -7,14 +7,13 @@
 
 import UIKit
 
-final class QuestionConfigCollectionView: UICollectionView, UICollectionViewDelegate {
+final class QuestionConfigCollectionView: UICollectionView {
     private var compositionalLayout: UICollectionViewCompositionalLayout {
         UICollectionViewCompositionalLayout(section: configureQuestionCategory())
     }
     
     override init(frame: CGRect, collectionViewLayout layout: UICollectionViewLayout) {
         super.init(frame: frame, collectionViewLayout: UICollectionViewFlowLayout())
-        self.delegate = self
         configureView()
     }
     

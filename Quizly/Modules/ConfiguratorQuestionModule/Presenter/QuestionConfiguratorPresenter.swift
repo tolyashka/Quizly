@@ -8,148 +8,78 @@
 import UIKit
 
 final class QuestionConfiguratorPresenter {
-    typealias SectionItemConfiguration = [QuestionSection: QuestionItemViewModel]
+    private var diffableDataSource: QuestionConfiguratorDataSource<QuestionConfigCollectionViewCell>?
     
-    private var dataSource: UICollectionViewDiffableDataSource<QuestionSection, QuestionItemViewModel>?
-    private let coordinator: Coordinator
-    private var view: IQuestionConfiguratorView?
-    private let model: IQuestionSectionFactory
-    private let configuratorStorage: IConfigurationStorage
-    private var selectedItems: SectionItemConfiguration = [:]
-    private lazy var sections = model.makeSections()
+    private var coordinator: Coordinator?
+    private weak var view: IQuestionConfiguratorView?
+    private let model: [QuestionSectionViewModel]
+    private var configurationSelector: SelectableConfigurator
+    private let savableConfigurator: SavableConfigurator
+    private let configurationNotificationCenter: QuestionConfigurationEvent
     
-    init(coordinator: Coordinator, model: IQuestionSectionFactory, configuratorStorage: IConfigurationStorage) {
+    init(coordinator: Coordinator,
+         model: [QuestionSectionViewModel],
+         configurationSelector: SelectableConfigurator,
+         savableConfigurator: SavableConfigurator,
+         configurationNotificationCenter: QuestionConfigurationEvent) {
         self.coordinator = coordinator
         self.model = model
-        self.configuratorStorage = configuratorStorage
-        updateSelectedItems()
+        self.configurationSelector = configurationSelector
+        self.savableConfigurator = savableConfigurator
+        self.configurationNotificationCenter = configurationNotificationCenter
     }
 }
 
 extension QuestionConfiguratorPresenter: IQuestionConfiguratorPresenter {
     func viewDidLoaded(_ view: IQuestionConfiguratorView) {
         self.view = view
+        self.view?.updateCurrentConfiguration(with: configurationSelector.getTitleItems())
     }
     
     func popViewController() {
         let coordinator = coordinator as? ConfigurationQuestionCoordinator
         coordinator?.dismiss()
     }
-
-    func getCurrentConfiguration() -> SectionItemConfiguration {
-        return selectedItems
+    
+    func saveConfiguration() {
+        savableConfigurator.save(configurationSelector.itemValues, for: .selectedItems)
+        
+        if let currentSavedConfiguration = savableConfigurator.currentSavedConfiguration {
+            configurationNotificationCenter.post(.userDidSelectItem, value: currentSavedConfiguration)
+        }
     }
     
     func configureDataSource(for collectionView: UICollectionView) {
-        dataSource = UICollectionViewDiffableDataSource<QuestionSection, QuestionItemViewModel>(
+        diffableDataSource = QuestionConfiguratorDataSource(
             collectionView: collectionView,
-            cellProvider: { collectionView, indexPath, itemIdentifier in
-                guard let cell = collectionView.dequeueReusableCell(
-                    withReuseIdentifier: QuestionConfigCollectionViewCell.identifier,
-                    for: indexPath) as? QuestionConfigCollectionViewCell else { return UICollectionViewCell() }
-                
-                cell.setValues(model: itemIdentifier)
-                return cell
+            cellCompletion: { cell, _, itemViewModel in
+                cell.setValues(model: itemViewModel)
+                cell.setSelectedAppearance(itemViewModel.isSelected)
             }
         )
     }
     
-    func applySnapshot() {
-        guard let selectedSections = getSelectedConfiguration(
-            for: .selectedItems,
-            with: SectionItemConfiguration.self
-        ) else {
-            applyDefaultSnapshot()
-            return
-        }
-        
-        var snapshot = NSDiffableDataSourceSnapshot<QuestionSection, QuestionItemViewModel>()
-        for section in sections {
-                let updatedItems = section.items.map { item in
-                    if let selected = selectedSections[section.type],
-                       selected.title == item.title {
-                        return QuestionItemViewModel(id: item.id, title: item.title, isSelected: true, queryItem: item.queryItem)
-                    } else {
-                        return QuestionItemViewModel(id: item.id, title: item.title, isSelected: false, queryItem: item.queryItem)
-                    }
-                }
-                snapshot.appendSections([section.type])
-                snapshot.appendItems(updatedItems, toSection: section.type)
-            }
-            
-            dataSource?.apply(snapshot, animatingDifferences: true)
-        }
-    
-    private func applyDefaultSnapshot() {
-        var snapshot = NSDiffableDataSourceSnapshot<QuestionSection, QuestionItemViewModel>()
-        
-        for section in sections {
-            snapshot.appendSections([section.type])
-            snapshot.appendItems(section.items, toSection: section.type)
-        }
-        
-        dataSource?.apply(snapshot, animatingDifferences: true)
+    func applySnapshot(withAnimation animated: Bool = true) {
+        diffableDataSource?.apply(sections: model, animated: true)
     }
     
     func didSelectItemAt(collectionView: UICollectionView, indexPath: IndexPath) {
-        guard let section = dataSource?.snapshot().sectionIdentifiers[indexPath.section],
-              let selectedItem = dataSource?.itemIdentifier(for: indexPath)
-        else { return }
-        
-        if isSelected(selectedItem, in: section) { return }
-        updateSelection(for: section, selected: selectedItem)
-    }
+        let currentSection = model[indexPath.section]
+        let items = currentSection.items
+        let currentItem = items[indexPath.row]
     
-    // MARK: - Set/get question configurator in storage
-    func updateStorage(for key: StorageIdentifier) {
-        configuratorStorage.save(storedValue: selectedItems, for: key)
-    }
-    
-    func getSelectedConfiguration(for key: StorageIdentifier, with type: SectionItemConfiguration.Type) -> SectionItemConfiguration? {
-        configuratorStorage.get(type: type, forKey: key)
-    }
-}
+        for item in items where item.isSelected {
+            item.isSelected = false
+        }
+        currentItem.isSelected = true
 
-private extension QuestionConfiguratorPresenter {
-    func setSelectItem(_ item: QuestionItemViewModel, in section: QuestionSection) {
-        selectedItems[section] = item
+        configurationSelector.updateValue(currentItem, for: currentSection.type)
+
+        var snapshot = diffableDataSource?.snapshot()
+        snapshot?.reloadItems(items)
+        if let snapshot { diffableDataSource?.apply(snapshot, animatingDifferences: true) }
+
+        view?.updateCurrentConfiguration(with: configurationSelector.getTitleItems())
     }
-    
-    func isSelected(_ item: QuestionItemViewModel, in section: QuestionSection) -> Bool {
-        return selectedItems[section] == item
-    }
-    
-    func updateSelection(for section: QuestionSection, selected: QuestionItemViewModel) {
-        guard var snapshot = dataSource?.snapshot() else { return }
-        
-        let oldItems = snapshot.itemIdentifiers(inSection: section)
-        let newItems = oldItems.map { item in
-            QuestionItemViewModel(
-                id: item.id,
-                title: item.title,
-                isSelected: item == selected,
-                queryItem: item.queryItem
-            )
-        }
-        
-        snapshot.deleteItems(oldItems)
-        snapshot.appendItems(newItems, toSection: section)
-        
-        dataSource?.apply(snapshot, animatingDifferences: true)
-        setSelectItem(selected, in: section)
-    }
-    
-    func updateSelectedItems() {
-//        let selectedItems = sections.map { $0.items.filter { $0.isSelected }
-        let selectedItems = sections.flatMap { section in
-            let selectedItems = section.items.filter { $0.isSelected }
-            return (section, selectedItems)
-        }
-        
-        for (section, selectedItems) in selectedItems {
-            for selectedItem in selectedItems {
-                setSelectItem(selectedItem, in: section.type)
-            }
-        }
-    }
+
 }

@@ -6,15 +6,17 @@
 //
 
 import UIKit
+
 protocol ICategoryView: AnyObject {
     var delegate: CategoryViewDelegate? { get }
     
-    func configure(category: [QuestionSection: QuestionItemViewModel]?)
+    func configure(with model: [QuestionItemViewModel])
 }
 
 final class CategoryView: UIView {
     weak var delegate: CategoryViewDelegate?
     
+    private let cornerRadius: CGFloat = 15.0
     private let imageDimensions = CGFloat(32.0)
     
     private lazy var labelsStack: UIStackView = {
@@ -35,7 +37,7 @@ final class CategoryView: UIView {
     
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
-        label.text = QuizMenuConstants.CategoryConstants.titleCategory.rawValue
+        label.text = QuizMenuConstants.CategoryConstants.titleCategory
         label.font = UIFont.systemFont(ofSize: 16)
         label.textColor = .gray
         return label
@@ -51,10 +53,12 @@ final class CategoryView: UIView {
     
     private lazy var arrowImageView: UIImageView = {
         let config = UIImage.SymbolConfiguration(pointSize: 16, weight: .medium)
+        
         let image = UIImage(
-            systemName: QuizMenuConstants.CategoryConstants.nextPresenrationImage.rawValue,
+            systemName: QuizMenuConstants.CategoryConstants.nextPresenrationImage,
             withConfiguration: config
         )
+        
         let imageView = UIImageView(image: image)
         imageView.tintColor = .darkGray
         imageView.contentMode = .center
@@ -98,15 +102,9 @@ final class CategoryView: UIView {
 
 // MARK: - ICategoryView protocol implementation
 extension CategoryView: ICategoryView {
-    func configure(category categories: [QuestionSection: QuestionItemViewModel]?) {
-        guard let categories else {
-            categoryLabel.text = QuizMenuConstants.CategoryConstants.defaultCategory.rawValue
-            return
-        }
-        
+    func configure(with model: [QuestionItemViewModel]) {
         var categoryTitle = String()
-        
-        for item in categories.values {
+        for item in model {
             categoryTitle += item.title + "\n"
         }
 
@@ -116,8 +114,8 @@ extension CategoryView: ICategoryView {
 
 // MARK: - Configure views
 private extension CategoryView {
-    private func setupView() {
-        self.layer.cornerRadius = 15
+    func setupView() {
+        self.layer.cornerRadius = cornerRadius
         backgroundColor = .white
         
         labelsStack.addArrangedSubview(titleLabel)
@@ -127,7 +125,10 @@ private extension CategoryView {
         mainStack.addArrangedSubview(arrowImageView)
         
         addSubview(mainStack)
-        
+        configureLayoutConstraints()
+    }
+    
+    func configureLayoutConstraints() {
         NSLayoutConstraint.activate([
             mainStack.topAnchor.constraint(equalTo: topAnchor, constant: 16),
             mainStack.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -16),

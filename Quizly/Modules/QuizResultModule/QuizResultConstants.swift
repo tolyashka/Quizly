@@ -9,7 +9,7 @@ import Foundation
 
 enum QuizResultConstants {
     enum ResultPresenter {
-        case showScoreText(score: Int, total: Int, percent: Int)
+        case showScoreText(score: Int, total: Int, percent: Double)
         
         var title: String {
             switch self {

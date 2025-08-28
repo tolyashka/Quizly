@@ -10,7 +10,7 @@ import Foundation
 protocol IURLConfigurator: AnyObject {
     var url: URL?{ get }
     
-    func updateURL(with queryConfiguration: [QueryItem]?)
+    func updateURL(with queryConfiguration: [URLQueryItem]?)
     func switchURL(with urlString: String)
 }
 
@@ -26,7 +26,7 @@ final class URLConfigurator: IURLConfigurator, AnyObject {
         self.urlString = urlString
     }
     
-    func updateURL(with queryConfiguration: [QueryItem]?) {
+    func updateURL(with queryConfiguration: [URLQueryItem]?) {
         guard var urlComponents = URLComponents(string: urlString) else {
             return
         }

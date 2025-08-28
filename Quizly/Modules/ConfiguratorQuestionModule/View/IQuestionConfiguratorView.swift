@@ -8,5 +8,5 @@
 import UIKit
 
 protocol IQuestionConfiguratorView: AnyObject, UIViewController {
-//    func updateCurrentConfig(with itemModel: QuestionItemViewModel)
+    func updateCurrentConfiguration(with title: String)
 }

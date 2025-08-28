@@ -17,13 +17,9 @@ protocol IConfigurationStorage: AnyObject {
 }
 
 final class ConfigurationStorage: IConfigurationStorage {
-    static let shared = ConfigurationStorage()
-    
-    private let userDefaults = UserDefaults.standard
-    private let decoder = JSONDecoder()
-    private let encoder = JSONEncoder()
-    
-    private init() { }
+    private lazy var userDefaults = UserDefaults.standard
+    private lazy var decoder = JSONDecoder()
+    private lazy var encoder = JSONEncoder()
     
     func save<StoredType: Codable>(storedValue: StoredType, for key: StorageIdentifier) {
         guard let encodeData = try? encoder.encode(storedValue) else { return }

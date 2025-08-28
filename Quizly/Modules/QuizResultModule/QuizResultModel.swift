@@ -7,7 +7,10 @@
 
 import Foundation
 
-struct QuizResultModel {
+struct QuizResultModel: Hashable {
+    let id: UUID
+    let date: Date
     let score: Int
-    let total: Int
+    let questionsCount: Int
+    let percent: Double
 }

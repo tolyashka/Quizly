@@ -36,7 +36,11 @@ final class QuizResultViewController: UIViewController {
         self.presenter = presenter
         super.init(nibName: nil, bundle: nil)
     }
-
+    
+    deinit {
+        print("deinit QuizResultViewController")
+    }
+    
     required init?(coder: NSCoder) { fatalError() }
 
     override func viewDidLoad() {

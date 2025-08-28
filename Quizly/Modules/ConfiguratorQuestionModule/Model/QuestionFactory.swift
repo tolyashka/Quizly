@@ -38,8 +38,8 @@ final class QuestionSectionFactory: IQuestionSectionFactory {
             QuestionItemViewModel(
                 id: UUID(),
                 title: item.title,
-                isSelected: index == defaultSelectedItem,
-                queryItem: item.queryItem
+                queryItem: item.queryItem,
+                isSelected: index == defaultSelectedItem
             )
         }
     }
