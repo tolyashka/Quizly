@@ -10,14 +10,14 @@ import Foundation
 enum LoadState {
     case beingUploaded
     case uploaded
-    case uploadWithError(String)
+    case uploadWithError(Error)
 }
 protocol INetworkManager: AnyObject {
     func fetchQuestions(
         dataUploadingHandler: @escaping (LoadState) -> Void,
         completionHandler: @escaping (QuestionModel) -> Void
     )
-    func createURLConfiguration(with configuration: [QueryItem]?)
+    func createURLConfiguration(with configuration: [URLQueryItem]?)
 }
 
 final class NetworkManager: NSObject, INetworkManager {
@@ -33,7 +33,7 @@ final class NetworkManager: NSObject, INetworkManager {
         self.urlConfigurator = urlConfigurator
     }
     
-    func createURLConfiguration(with configuration: [QueryItem]?) {
+    func createURLConfiguration(with configuration: [URLQueryItem]?) {
         urlConfigurator.updateURL(with: configuration)
     }
     
@@ -48,7 +48,7 @@ final class NetworkManager: NSObject, INetworkManager {
             case .success(let questionModel):
                 completionHandler(questionModel)
             case .failure(let error):
-                dataUploadingHandler(LoadState.uploadWithError(error.localizedDescription))
+                dataUploadingHandler(LoadState.uploadWithError(error))
             }
         }
     }

@@ -7,16 +7,16 @@
 
 import UIKit
 
-protocol IHistoryGameSessionPresenter {
-    var numberOfRows: Int { get }
+protocol IHistoryGameSessionPresenter: AnyObject {
     var heightForRow: CGFloat { get }
     
     func viewDidLoaded(_ view: IHistoryGameSessionView)
     func updateHistory(with gameSessions: [GameSession])
-    func cellForRow(_ tableView: UITableView, at indexPath: IndexPath) -> UITableViewCell
+    func configureDataSource(for tableView: UITableView)
 }
 
 final class HistoryGameSessionPresenter {
+    private var diffableDataSource: HistoryListDataSource<HistoryTableViewCell>?
     private let dataService: IDataService
     private weak var view: IHistoryGameSessionView?
     private weak var coordinator: Coordinator?
@@ -28,30 +28,43 @@ final class HistoryGameSessionPresenter {
 }
 
 extension HistoryGameSessionPresenter {
-    var gameSessionsResults: [GameSession] {
-        dataService.fetchAllGameSessions()
+    var gameSessionsResults: [QuizResultModel]? {
+        let fetchedResults = dataService.fetchResults()
+        print(fetchedResults)
+        var result: [QuizResultModel]?
+        switch fetchedResults {
+        case .success(let success):
+            result = success
+        case .failure(_):
+            result = nil
+        }
+        return result
     }
     
     func updateHistory(with gameSessions: [GameSession]) {
-        view?.updateTableView()
+//        view?.updateTableView()
     }
 }
+
 extension HistoryGameSessionPresenter: IHistoryGameSessionPresenter {
     var heightForRow: CGFloat {
-        return 125.0
+        return 85.0
     }
     
-    var numberOfRows: Int {
-        return gameSessionsResults.count
+    func configureDataSource(for tableView: UITableView) {
+        diffableDataSource = HistoryListDataSource(
+            tableView: tableView) { cell, indexPath, model in
+                cell.updateValue(with: model)
+        }
+    }
+    
+    func applySnapshot() {
+        guard let gameSessionsResults else { return }
+        diffableDataSource?.apply(with: gameSessionsResults)
     }
     
     func viewDidLoaded(_ view: any IHistoryGameSessionView) {
         self.view = view
-    }
-    
-    func cellForRow(_ tableView: UITableView, at indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: HistoryTableViewCell.identifier, for: indexPath) as? HistoryTableViewCell else { return UITableViewCell() }
-        cell.updateValue(with: gameSessionsResults[indexPath.row])
-        return cell
+        applySnapshot()
     }
 }

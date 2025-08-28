@@ -7,6 +7,10 @@
 
 import Foundation
 
+struct ResultGameSessionModel {
+    let correctAnswersCount: Int
+}
+
 struct QuestionModel: Decodable {
     let results: [ResultItem]
 
@@ -25,21 +29,14 @@ struct ResultItem: Decodable {
     let category: String
     let question: String
     let correctAnswer: String
-    let incorrectAnswers: [String]
-    
+    var incorrectAnswers: [String]
+        
     var correctAnswerCount: Int {
         return 1
     }
     
     var answersCount: Int {
         incorrectAnswers.count + correctAnswerCount
-    }
-
-    func getRandomQuestions(correctIndex: inout Int) -> [String] {
-        var randomQuestions = incorrectAnswers
-        correctIndex = Int.random(in: 0..<answersCount)
-        randomQuestions.insert(correctAnswer, at: correctIndex)
-        return randomQuestions
     }
 
     private enum CodingKeys: String, CodingKey {

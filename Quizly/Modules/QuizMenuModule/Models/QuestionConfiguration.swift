@@ -9,7 +9,7 @@ import Foundation
 
 protocol IQuestionConfiguration {
     var title: String { get }
-    var queryItem: QueryItem? { get }
+    var queryItem: URLQueryItem? { get }
 }
 
 enum QuestionConfigurator {
@@ -42,56 +42,56 @@ enum QuestionConfigurator {
             self.rawValue
         }
         
-        var queryItem: QueryItem? {
-            let result: QueryItem?
+        var queryItem: URLQueryItem? {
+            let result: URLQueryItem?
             switch self {
             case .any:              result = nil
-            case .generalKnowlage:  result = QueryItem(name: "category", value: "9")
-            case .books:            result = QueryItem(name: "category", value: "10")
-            case .films:            result = QueryItem(name: "category", value: "11")
-            case .music:            result = QueryItem(name: "category", value: "12")
-            case .television:       result = QueryItem(name: "category", value: "14")
-            case .videoGames:       result = QueryItem(name: "category", value: "15")
-            case .boardGames:       result = QueryItem(name: "category", value: "16")
-            case .natureScience:    result = QueryItem(name: "category", value: "17")
-            case .computerScience:  result = QueryItem(name: "category", value: "18")
-            case .mathematic:       result = QueryItem(name: "category", value: "19")
-            case .sports:           result = QueryItem(name: "category", value: "21")
-            case .geography:        result = QueryItem(name: "category", value: "22")
-            case .history:          result = QueryItem(name: "category", value: "23")
-            case .politics:         result = QueryItem(name: "category", value: "24")
-            case .art:              result = QueryItem(name: "category", value: "25")
-            case .celebrities:      result = QueryItem(name: "category", value: "26")
-            case .animals:          result = QueryItem(name: "category", value: "27")
-            case .vehicles:         result = QueryItem(name: "category", value: "28")
-            case .comics:           result = QueryItem(name: "category", value: "29")
-            case .gadgets:          result = QueryItem(name: "category", value: "30")
-            case .anime:            result = QueryItem(name: "category", value: "31")
-            case .cartoon:          result = QueryItem(name: "category", value: "32")
+            case .generalKnowlage:  result = URLQueryItem(name: "category", value: "9")
+            case .books:            result = URLQueryItem(name: "category", value: "10")
+            case .films:            result = URLQueryItem(name: "category", value: "11")
+            case .music:            result = URLQueryItem(name: "category", value: "12")
+            case .television:       result = URLQueryItem(name: "category", value: "14")
+            case .videoGames:       result = URLQueryItem(name: "category", value: "15")
+            case .boardGames:       result = URLQueryItem(name: "category", value: "16")
+            case .natureScience:    result = URLQueryItem(name: "category", value: "17")
+            case .computerScience:  result = URLQueryItem(name: "category", value: "18")
+            case .mathematic:       result = URLQueryItem(name: "category", value: "19")
+            case .sports:           result = URLQueryItem(name: "category", value: "21")
+            case .geography:        result = URLQueryItem(name: "category", value: "22")
+            case .history:          result = URLQueryItem(name: "category", value: "23")
+            case .politics:         result = URLQueryItem(name: "category", value: "24")
+            case .art:              result = URLQueryItem(name: "category", value: "25")
+            case .celebrities:      result = URLQueryItem(name: "category", value: "26")
+            case .animals:          result = URLQueryItem(name: "category", value: "27")
+            case .vehicles:         result = URLQueryItem(name: "category", value: "28")
+            case .comics:           result = URLQueryItem(name: "category", value: "29")
+            case .gadgets:          result = URLQueryItem(name: "category", value: "30")
+            case .anime:            result = URLQueryItem(name: "category", value: "31")
+            case .cartoon:          result = URLQueryItem(name: "category", value: "32")
             }
             return result
         }
     }
     
     enum QuestionsCounts: String, IQuestionConfiguration, CaseIterable {
-        case ten     = "10 случайных"
-        case twenty  = "20 случайных"
-        case thirty  = "30 случайных"
-        case fifty   = "50 случайных"
-        case hundred = "100 случайных"
+        case five   = "5 случайных"
+        case ten    = "10 случайных"
+        case twenty = "20 случайных"
+        case thirty = "30 случайных"
+        case fifty  = "50 случайных"
         
         var title: String {
             self.rawValue
         }
         
-        var queryItem: QueryItem? {
-            let result: QueryItem
+        var queryItem: URLQueryItem? {
+            let result: URLQueryItem
             switch self {
-            case .ten:      result = QueryItem(name: "amount", value: "10")
-            case .twenty:   result = QueryItem(name: "amount", value: "20")
-            case .thirty:   result = QueryItem(name: "amount", value: "30")
-            case .fifty:    result = QueryItem(name: "amount", value: "50")
-            case .hundred:  result = QueryItem(name: "amount", value: "100")
+            case .five:      result = URLQueryItem(name: "amount", value: "5")
+            case .ten:   result = URLQueryItem(name: "amount", value: "10")
+            case .twenty:   result = URLQueryItem(name: "amount", value: "20")
+            case .thirty:    result = URLQueryItem(name: "amount", value: "30")
+            case .fifty:  result = URLQueryItem(name: "amount", value: "50")
             }
             return result
         }
@@ -107,13 +107,13 @@ enum QuestionConfigurator {
             self.rawValue
         }
         
-        var queryItem: QueryItem? {
-            let result: QueryItem?
+        var queryItem: URLQueryItem? {
+            let result: URLQueryItem?
             switch self {
             case .any:      result = nil
-            case .easy:     result = QueryItem(name: "difficulty", value: "easy")
-            case .medium:   result = QueryItem(name: "difficulty", value: "medium")
-            case .hard:     result = QueryItem(name: "difficulty", value: "hard")
+            case .easy:     result = URLQueryItem(name: "difficulty", value: "easy")
+            case .medium:   result = URLQueryItem(name: "difficulty", value: "medium")
+            case .hard:     result = URLQueryItem(name: "difficulty", value: "hard")
             }
             return result
         }
@@ -128,12 +128,12 @@ enum QuestionConfigurator {
             self.rawValue
         }
         
-        var queryItem: QueryItem? {
-            let result: QueryItem?
+        var queryItem: URLQueryItem? {
+            let result: URLQueryItem?
             switch self {
             case .any:          result = nil
-            case .multiple:     result = QueryItem(name: "type", value: "multiple")
-            case .boolean:      result = QueryItem(name: "type", value: "boolean")
+            case .multiple:     result = URLQueryItem(name: "type", value: "multiple")
+            case .boolean:      result = URLQueryItem(name: "type", value: "boolean")
             }
             return result
         }

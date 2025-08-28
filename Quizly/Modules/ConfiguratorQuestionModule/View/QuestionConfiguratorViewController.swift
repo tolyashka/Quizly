@@ -9,7 +9,7 @@ import UIKit
 
 final class QuestionConfiguratorViewController: UIViewController {
     private let presenter: IQuestionConfiguratorPresenter
-    
+
     private lazy var saveConfigurationButton: UIButton = {
         let button = UIButton()
         button.setTitle(ConfigurationConstants.ViewConstant.saveConfiguration.rawValue, for: .normal)
@@ -24,6 +24,16 @@ final class QuestionConfiguratorViewController: UIViewController {
             for: .touchUpInside
         )
         return button
+    }()
+    
+    private lazy var selectedConfigurationLabel: UILabel = {
+        let label = UILabel()
+        label.font = .boldSystemFont(ofSize: 18)
+        label.textAlignment = .left
+        label.numberOfLines = 0
+        label.textColor = .darkGray
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
     }()
     
     private lazy var questionCollectionView: QuestionConfigCollectionView = {
@@ -53,13 +63,17 @@ final class QuestionConfiguratorViewController: UIViewController {
     }
     
     @objc private func saveConfiguration() {
-        presenter.updateStorage(for: .selectedItems)
+        presenter.saveConfiguration()
         presenter.popViewController()
     }
 }
-extension QuestionConfiguratorViewController: IQuestionConfiguratorView {
 
+extension QuestionConfiguratorViewController: IQuestionConfiguratorView {
+    func updateCurrentConfiguration(with title: String) {
+        selectedConfigurationLabel.text = title
+    }
 }
+
 extension QuestionConfiguratorViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         presenter.didSelectItemAt(collectionView: collectionView, indexPath: indexPath)
@@ -72,7 +86,7 @@ private extension QuestionConfiguratorViewController {
     }
     
     func applySnapshot() {
-        presenter.applySnapshot()
+        presenter.applySnapshot(withAnimation: false)
     }
 }
 
@@ -86,14 +100,20 @@ private extension QuestionConfiguratorViewController {
     func setLayoutConstraints() {
         view.addSubview(questionCollectionView)
         view.addSubview(saveConfigurationButton)
+        view.addSubview(selectedConfigurationLabel)
         
         NSLayoutConstraint.activate([
-            saveConfigurationButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 15),
-            saveConfigurationButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -15),
-            saveConfigurationButton.heightAnchor.constraint(equalToConstant: 50),
-            saveConfigurationButton.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.3),
+            selectedConfigurationLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            selectedConfigurationLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 25),
+            selectedConfigurationLabel.trailingAnchor.constraint(equalTo: saveConfigurationButton.leadingAnchor, constant: -5),
+            selectedConfigurationLabel.heightAnchor.constraint(equalToConstant: 90),
             
-            questionCollectionView.topAnchor.constraint(equalTo: saveConfigurationButton.bottomAnchor, constant: 10),
+            saveConfigurationButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
+            saveConfigurationButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -15),
+            saveConfigurationButton.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.3),
+            saveConfigurationButton.heightAnchor.constraint(equalToConstant: 50),
+            
+            questionCollectionView.topAnchor.constraint(equalTo: selectedConfigurationLabel.bottomAnchor, constant: 10),
             questionCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             questionCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             questionCollectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor)

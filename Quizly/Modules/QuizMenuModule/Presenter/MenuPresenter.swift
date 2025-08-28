@@ -8,26 +8,41 @@
 import UIKit
 
 final class MenuPresenter {
-    typealias QuestionConfiguration = [QuestionSection: QuestionItemViewModel]
-    
     private weak var view: IStartMenuView?
     private var coordinator: Coordinator?
+    private let questionConfigurator: SelectableConfigurator
     private let dataService: IDataService
+    private let configurationNotificationCenter: QuestionConfigurationEvent
+    private let savableConfigurator: SavableConfigurator
+    private var token: NSObjectProtocol?
     
-    private var questionConfiguration: QuestionConfiguration? {
-        ConfigurationStorage.shared.get(type: QuestionConfiguration.self, forKey: .selectedItems)
+    init(coordinator: Coordinator,
+         questionConfigurator: SelectableConfigurator,
+         dataService: IDataService,
+         savableConfigurator: SavableConfigurator,
+         configurationNotificationCenter: QuestionConfigurationEvent
+    ) {
+        self.coordinator = coordinator
+        self.questionConfigurator = questionConfigurator
+        self.dataService = dataService
+        self.savableConfigurator = savableConfigurator
+        self.configurationNotificationCenter = configurationNotificationCenter
+        
+        setQuestionConfigurationObserver()
     }
     
-    init(coordinator: Coordinator, dataService: IDataService) {
-        self.coordinator = coordinator
-        self.dataService = dataService
+    deinit {
+        if let token = token {
+            configurationNotificationCenter.removeObserve(with: token)
+        }
     }
 }
 
 extension MenuPresenter: IMenuPresenter {
     func viewDidLoad(view: IStartMenuView) {
         self.view = view
-        self.view?.update(questionConfiguration: questionConfiguration)
+        self.view?.update(with: questionConfigurator.itemValues)
+        updateQuestionConfigurationTitles()
     }
     
     func chooseCategory() {
@@ -35,19 +50,28 @@ extension MenuPresenter: IMenuPresenter {
         coordinator?.showConfigurationQuestionDetail()
     }
     
-    func startQuizSession() { // !!!!!
-        let config = QuestionConfigModel(
-            id: UUID(),
-            title: "title",
-            difficultyLevel: "confifugration",
-            countQuestions: 10,
-            answerType: "Single"
-        )
-        dataService.saveQuestionConfig(config)
-        dataService.setActiveConfigID(config.id)
+    func updateQuestionConfigurationTitles() {
+        guard let currentConfiguration = savableConfigurator.currentSavedConfiguration else { return }
+        view?.update(with: currentConfiguration)
+    }
+}
+
+// Coordinator
+extension MenuPresenter {
+    func startQuizSession() {
+//        dataService.saveQuestionConfig(config)
+//        dataService.setActiveConfigID(config.id)
         
-        let coordinator = coordinator as? PlayMenuCoordinator // !!!!!!!!!!!!!!
-        coordinator?.updateQuestionsConfigurations(with: questionConfiguration) // !!!!!!!!!
-        coordinator?.showQuestionLoadModule() // !!!!!!!!!!!!!!!!!!
+        let coordinator = coordinator as? PlayMenuCoordinator
+        coordinator?.updateQuestionsConfigurations(with: questionConfigurator.itemValues)
+        coordinator?.showQuestionLoadModule()
+    }
+}
+
+private extension MenuPresenter {
+    func setQuestionConfigurationObserver(with event: Event<[QuestionItemViewModel]> = .userDidSelectItem) {
+        token = configurationNotificationCenter.observe(event) { selectedItems in
+            self.view?.update(with: selectedItems)
+        }
     }
 }

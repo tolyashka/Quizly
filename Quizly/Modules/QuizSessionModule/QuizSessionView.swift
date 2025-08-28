@@ -8,11 +8,12 @@
 import UIKit
 
 protocol IQuizSessionView: AnyObject {
-    func displayQuestion(_ question: String)
+    func displayQuestion(_ question: String?)
     func showAnswers(_ answers: [String])
-    func highlightAnswer(at index: Int, isCorrect: Bool)
-    func disableAllAnswers()
+    //    func disableAllAnswers()
     func showProgress(current: Int)
+    func updateInteractions(isEnabled: Bool)
+    func updateAnswers(correctIndex: Int, uncorrectIndex: Int?)
 }
 
 final class QuizViewController: UIViewController {
@@ -30,7 +31,7 @@ final class QuizViewController: UIViewController {
         stackView.translatesAutoresizingMaskIntoConstraints = false
         return stackView
     }()
-
+    
     private lazy var progressStackView: UIStackView = {
         let stackView = UIStackView()
         stackView.axis = .vertical
@@ -61,7 +62,7 @@ final class QuizViewController: UIViewController {
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
-
+    
     private lazy var progressLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 14)
@@ -70,12 +71,12 @@ final class QuizViewController: UIViewController {
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
-
+    
     init(presenter: IQuizSessionPresenter) {
         self.presenter = presenter
         super.init(nibName: nil, bundle: nil)
     }
-
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -83,7 +84,7 @@ final class QuizViewController: UIViewController {
     deinit {
         print("deinit QuizViewController")
     }
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
@@ -98,27 +99,40 @@ final class QuizViewController: UIViewController {
 
 // MARK: - IQuizSessionView
 extension QuizViewController: IQuizSessionView {
-    func displayQuestion(_ question: String) {
+    func updateAnswers(correctIndex: Int, uncorrectIndex: Int?) {
+        self.answerButtons[correctIndex].backgroundColor = .systemGreen
+        if let uncorrectIndex {
+            self.answerButtons[uncorrectIndex].backgroundColor = .red
+        }
+    }
+    
+    func displayQuestion(_ question: String?) {
         questionLabel.text = question
     }
-
+    
     func showAnswers(_ answers: [String]) {
         buttonStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
         createButton(with: answers)
     }
-
-    func highlightAnswer(at index: Int, isCorrect: Bool) {
-        let button = answerButtons[index]
-        button.backgroundColor = isCorrect ? .systemGreen : .systemRed
+    
+    //    func highlightAnswer(at index: Int, isCorrect: Bool) {
+    //        let button = answerButtons[index]
+    //        button.backgroundColor = isCorrect ? .systemGreen : .systemRed
+    //    }
+    
+    //    func disableAllAnswers() {
+    //        answerButtons.forEach { $0.isEnabled = false }
+    //    }
+    
+    func updateInteractions(isEnabled: Bool) {
+        answerButtons.forEach { button in
+            button.isUserInteractionEnabled = isEnabled
+        }
     }
-
-    func disableAllAnswers() {
-        answerButtons.forEach { $0.isEnabled = false }
-    }
-
+    
     func showProgress(current: Int) {
         observerProgress.completedUnitCount = Int64(current)
-        progressLabel.text = "Вопрос \(current) из \(presenter.getTotalQuestionsCount())"
+        progressLabel.text = "Вопрос \(current) из \(presenter.getQuestionsCount())"
     }
 }
 
@@ -169,6 +183,6 @@ private extension QuizViewController {
     }
     
     func setTotalQuestionsCount() {
-        observerProgress.totalUnitCount = presenter.getTotalQuestionsCount()
+        observerProgress.totalUnitCount = presenter.getQuestionsCount()
     }
 }

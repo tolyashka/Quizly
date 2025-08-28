@@ -12,8 +12,8 @@ enum PersistantContainerStorage {
     static let persistentContainer: NSPersistentContainer = {
         let container = NSPersistentContainer(name: "QuizGameModel")
         container.loadPersistentStores { _, error in
-            if let error = error as NSError? {
-                print("Error to create persistent container: \(error), \(error.userInfo)")
+            if let error = error {
+                fatalError("Error creating persistent container: \(error)")
             }
         }
         return container
@@ -26,8 +26,9 @@ enum PersistantContainerStorage {
                 try context.save()
             } catch {
                 let nserror = error as NSError
-                print("Error to save context: \(nserror), \(nserror.userInfo)")
+                print("Error saving context: \(nserror)")
             }
         }
     }
 }
+

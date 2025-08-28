@@ -14,11 +14,16 @@ final class LoadQuestionCoordinator: Coordinator {
     private let networkManager: INetworkManager
     private let dataService: IDataService
     private let navigationController: UINavigationController
+    private let savedConfiguration: SavableConfigurator
     
-    init(navigationController: UINavigationController, netwowrkManager: INetworkManager, dataService: IDataService) {
+    init(navigationController: UINavigationController,
+         netwowrkManager: INetworkManager,
+         dataService: IDataService,
+         savedConfiguration: SavableConfigurator) {
         self.navigationController = navigationController
         self.networkManager = netwowrkManager
         self.dataService = dataService
+        self.savedConfiguration = savedConfiguration
     }
     
     func start() {
@@ -26,7 +31,7 @@ final class LoadQuestionCoordinator: Coordinator {
     }
     
     func showQuizSessionModule(with questionModel: QuestionModel) {
-        let quizSessionCoordinator = QuizSessionCoordinator(navigationController: navigationController, questionModel: questionModel, dataService: dataService)
+        let quizSessionCoordinator = QuizSessionCoordinator(navigationController: navigationController, questionModel: questionModel, dataService: dataService, savedConfiguration: savedConfiguration)
         quizSessionCoordinator.start()
     }
     
@@ -37,7 +42,11 @@ final class LoadQuestionCoordinator: Coordinator {
 
 private extension LoadQuestionCoordinator {
     func showModule() {
-        let presenter = LoadQuestionPresenter(coordinator: self, networkManager: networkManager)
+        let presenter = LoadQuestionPresenter(
+            coordinator: self,
+            networkManager: networkManager,
+            savedConfiguration: savedConfiguration
+        )
         let viewController = LoadQuestionViewController(presenter: presenter)
         navigationController.pushViewController(viewController, animated: true)
     }

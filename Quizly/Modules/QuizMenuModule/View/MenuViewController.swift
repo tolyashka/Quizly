@@ -7,8 +7,15 @@
 
 import UIKit
 
+//fileprivate struct ViewConfigurator {
+//    static let titleLabelSize = 52
+//    static let cornerRadius = 20
+//    static let stackSpacing = 20
+//    static let 
+//}
+
 protocol IStartMenuView: AnyObject {
-    func update(questionConfiguration: [QuestionSection: QuestionItemViewModel]?)
+    func update(with model: [QuestionItemViewModel])
 }
 
 final class MenuViewController: UIViewController {
@@ -25,15 +32,16 @@ final class MenuViewController: UIViewController {
         let label = UILabel()
         label.textColor = .systemYellow
         label.font = .boldSystemFont(ofSize: 52)
-        label.text = QuizMenuConstants.MenuViewConstants.titleApp.rawValue
+        label.text = QuizMenuConstants.MenuViewConstants.titleApp
         label.textAlignment = .center
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
     private lazy var settingsButton: UIButton = {
+        let image = UIImage(systemName: QuizMenuConstants.MenuViewConstants.settingsButtonPin)
         let button = UIButton(configuration: .plain(), primaryAction: nil)
-        button.setImage(UIImage(systemName: QuizMenuConstants.MenuViewConstants.settingsButtonPin.rawValue), for: .normal) // !
+        button.setImage(image, for: .normal)
         button.backgroundColor = .systemYellow
         button.layer.cornerRadius = 20
         button.setContentHuggingPriority(.required, for: .horizontal)
@@ -41,9 +49,10 @@ final class MenuViewController: UIViewController {
     }()
     
     private lazy var playButton: UIButton = {
+        let title = QuizMenuConstants.MenuViewConstants.playButton
         let button = UIButton()
         button.backgroundColor = .systemYellow
-        button.setTitle(QuizMenuConstants.MenuViewConstants.playButton.rawValue, for: .normal) // !!
+        button.setTitle(title, for: .normal)
         button.layer.cornerRadius = 20
         button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 20)
         button.setTitleColor(.darkGray, for: .normal)
@@ -93,8 +102,8 @@ final class MenuViewController: UIViewController {
 }
 
 extension MenuViewController: IStartMenuView {
-    func update(questionConfiguration: [QuestionSection: QuestionItemViewModel]?) {
-        categoryView.configure(category: questionConfiguration)
+    func update(with model: [QuestionItemViewModel]) {
+        categoryView.configure(with: model)
     }
 }
 

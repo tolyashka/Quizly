@@ -8,11 +8,22 @@
 import UIKit
 
 protocol ILoadQuestionView: AnyObject {
+    func updateQuestionConfiguration(with title: String?)
     func updateLoad(with isLoaded: Bool)
     func loadWithError(titleError: String)
 }
 
-final class LoadQuestionViewController: UIViewController, ILoadQuestionView {
+final class LoadQuestionViewController: UIViewController {
+    private lazy var titleConfigurationStack: UIStackView = {
+        let stackView = UIStackView(arrangedSubviews: [loadLabel, questionConfigurationLabel])
+        stackView.axis = .vertical
+        stackView.spacing = 10
+        stackView.alignment = .center
+        stackView.distribution = .fillEqually
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        return stackView
+    }()
+    
     private let loadLabel: UILabel = {
         let label = UILabel()
         label.font = .boldSystemFont(ofSize: 32)
@@ -53,6 +64,18 @@ final class LoadQuestionViewController: UIViewController, ILoadQuestionView {
         return button
     }()
     
+    private lazy var questionConfigurationLabel: UILabel = {
+        let label = UILabel()
+        label.textColor = .black.withAlphaComponent(0.85)
+        label.font = .italicSystemFont(ofSize: 24)
+        label.numberOfLines = 0
+        label.textAlignment = .center
+        label.adjustsFontSizeToFitWidth = true
+        label.minimumScaleFactor = 0.5
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
     private let presenter: ILoadQuestionPresenter
     
     init(presenter: ILoadQuestionPresenter) {
@@ -74,6 +97,19 @@ final class LoadQuestionViewController: UIViewController, ILoadQuestionView {
         configureViews()
     }
     
+    @objc private func backButtonAction() {
+        presenter.popWithError()
+    }
+    
+    private func updateLoadIndicator(with isAnimating: Bool) {
+        isAnimating ? loadIndicator.startAnimating() : loadIndicator.stopAnimating()
+    }
+}
+extension LoadQuestionViewController: ILoadQuestionView {
+    func updateQuestionConfiguration(with title: String?) {
+        self.questionConfigurationLabel.text = title
+    }
+    
     func updateLoad(with isLoaded: Bool) {
         updateLoadIndicator(with: isLoaded)
         backButton.isHidden = true
@@ -85,19 +121,11 @@ final class LoadQuestionViewController: UIViewController, ILoadQuestionView {
         self.loadErrorImageView.isHidden = false
         self.backButton.isHidden = false
     }
-    
-    @objc private func backButtonAction() {
-        presenter.popWithError()
-    }
-    
-    private func updateLoadIndicator(with isAnimating: Bool) {
-        isAnimating ? loadIndicator.startAnimating() : loadIndicator.stopAnimating()
-    }
 }
 
-extension LoadQuestionViewController {
+private extension LoadQuestionViewController {
     func configureViews() {
-        view.addSubview(loadLabel)
+        view.addSubview(titleConfigurationStack)
         view.addSubview(loadIndicator)
         view.addSubview(backButton)
         view.addSubview(loadErrorImageView)
@@ -106,11 +134,11 @@ extension LoadQuestionViewController {
     
     func configureLayoutConstraints() {
         NSLayoutConstraint.activate([
-            loadLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 100),
-            loadLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10),
-            loadLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10),
+            titleConfigurationStack.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 25),
+            titleConfigurationStack.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 25),
+            titleConfigurationStack.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -25),
             
-            loadIndicator.topAnchor.constraint(equalTo: loadLabel.bottomAnchor, constant: 25),
+            loadIndicator.topAnchor.constraint(equalTo: titleConfigurationStack.bottomAnchor, constant: 25),
             loadIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             
             loadErrorImageView.topAnchor.constraint(equalTo: loadLabel.bottomAnchor, constant: 25),

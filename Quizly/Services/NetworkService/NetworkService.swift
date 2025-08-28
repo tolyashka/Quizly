@@ -36,7 +36,6 @@ extension NetworkClient: INetworkClient {
         let task = session.dataTask(with: url) { [weak self] data, response, error in
             guard let self else { return }
             if let data {
-                print("2")
                 do {
                     let result = try jsonDecoder.decode(ResponseSchema.self, from: data)
                     completion(.success(result))

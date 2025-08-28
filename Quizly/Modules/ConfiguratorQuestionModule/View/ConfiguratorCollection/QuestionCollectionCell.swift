@@ -7,11 +7,7 @@
 
 import UIKit
 
-final class QuestionConfigCollectionViewCell: UICollectionViewCell {
-    static var identifier: String {
-        String(describing: QuestionConfigCollectionViewCell.self)
-    }
-    
+final class QuestionConfigCollectionViewCell: UICollectionViewCell {    
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
         label.font = .boldSystemFont(ofSize: 16)
@@ -29,19 +25,22 @@ final class QuestionConfigCollectionViewCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
+    func setSelectedAppearance(_ isSelected: Bool) {
+        configureColor(with: isSelected)
+    }
+    
     func setValues(model: QuestionItemViewModel) {
         self.titleLabel.text = model.title
-        configureColor(with: model)
     }
 }
 
 // MARK: - Configure views
 private extension QuestionConfigCollectionViewCell {
-    func configureColor(with model: QuestionItemViewModel) {
-        let selectedColor = UIColor.systemYellow.withAlphaComponent(0.25)
-        let defaultColor = UIColor.white
+    func configureColor(with flag: Bool) {
+        let selectedColor = UIColor.systemYellow
+        let defaultColor = UIColor.clear
         
-        contentView.backgroundColor = model.isSelected ? selectedColor : defaultColor
+        contentView.backgroundColor = flag ? selectedColor : defaultColor
     }
     
     func configureCell() {

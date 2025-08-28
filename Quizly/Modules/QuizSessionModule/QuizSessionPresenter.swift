@@ -8,85 +8,72 @@
 import Foundation
 
 protocol IQuizSessionPresenter: AnyObject {
+    func getQuestionsCount() -> Int64 
     func viewDidLoad(_ view: IQuizSessionView)
     func didSelectAnswer(at index: Int)
-    func getTotalQuestionsCount() -> Int64
 }
 
 final class QuizSessionPresenter {
     private weak var view: IQuizSessionView?
-    private let questionModel: QuestionModel
-    private var coordinator: Coordinator?
-    // FIXME: под конфигурацию вопроса тоже отдельную структуру 
-    private let delayForChangedQuestion = 1.0
-    private var questionIndex = 0
-    private let questionOffset = 1
-    private var correctAnswerIndex: Int?
-    private var correctAnswersCount = 0
+    private let gameSession: IGameSession
+    private let coordinator: Coordinator
     
-    init(coordinator: Coordinator, questionModel: QuestionModel) {
-        self.questionModel = questionModel
+    init(coordinator: Coordinator, gameSession: IGameSession) {
+        self.gameSession = gameSession
         self.coordinator = coordinator
+        configureGameSession()
+    }
+    
+    private func configureGameSession() {
+        gameSession.delegate = self
     }
 }
 
-// MARK: - IQuizSessionPresenter
 extension QuizSessionPresenter: IQuizSessionPresenter {
-    func viewDidLoad(_ view: IQuizSessionView) {
+    func viewDidLoad(_ view: any IQuizSessionView) {
         self.view = view
-        loadQuestion()
-    }
-
-    func didSelectAnswer(at index: Int) {
-        guard let correctIndex = correctAnswerIndex else { return }
-        let isCorrect = index == correctIndex
-        
-        if isCorrect {
-            correctAnswersCount += questionOffset
-        }
-        
-        view?.highlightAnswer(at: index, isCorrect: isCorrect)
-        view?.disableAllAnswers()
-
-        nextQuestion(with: delayForChangedQuestion)
+        showQuestion()
     }
     
-    func getTotalQuestionsCount() -> Int64 {
-        Int64(questionModel.questionsCount)
+    func didSelectAnswer(at index: Int) {
+        view?.updateInteractions(isEnabled: false)
+        gameSession.didSelectItem(at: index)
+    }
+    
+    func getQuestionsCount() -> Int64 {
+        Int64(gameSession.sessionInformation.countQuestions)
+    }
+}
+
+extension QuizSessionPresenter: QuizStateDelegate {
+    func showAnswerResult(correctIndex: Int, uncorrectIndex: Int?) {
+        view?.updateAnswers(correctIndex: correctIndex, uncorrectIndex: uncorrectIndex)
+    }
+    
+    func showNextQuestion(_ question: QuestionResult) {
+        showNextQuestion()
+    }
+    
+    func showQuizFinished() {
+        showResultModule()
     }
 }
 
 private extension QuizSessionPresenter {
-    func loadQuestion() {
-        guard questionIndex < questionModel.results.count else {
-            let coordinator = coordinator as? QuizSessionCoordinator
-            
-            let resultPercent = calculatePercentage(correctAnswers: correctAnswersCount, totalAnswers: questionModel.questionsCount)
-            let quizResultModel = QuizResultModel(date: Date(), score: correctAnswersCount, total: questionModel.questionsCount, percent: resultPercent)
-            coordinator?.showQuizResult(quizResultModel: quizResultModel)
-            return
-        }
-        
-        var correctIndex = 0
-        let question = questionModel.results[questionIndex]
-        let answers = question.getRandomQuestions(correctIndex: &correctIndex)
-        correctAnswerIndex = correctIndex
-
-        view?.displayQuestion(question.question)
-        view?.showAnswers(answers)
-        view?.showProgress(current: questionIndex + questionOffset)
+    func showQuestion() {
+        view?.displayQuestion(gameSession.sessionInformation.getTitleQuestion)
+        view?.showAnswers(gameSession.sessionInformation.getTitleAnswers)
+        view?.showProgress(current: gameSession.sessionInformation.getCurrentQuestionPosition)
     }
     
-    func nextQuestion(with delay: Double) {
-        DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
-            self.questionIndex += self.questionOffset
-            self.loadQuestion()
-        }
+    func showNextQuestion() {
+        showQuestion()
+        view?.updateInteractions(isEnabled: true)
     }
     
-    func calculatePercentage(correctAnswers: Int, totalAnswers: Int) -> Double {
-        let percentageDivisor = 100.0
-        let resultPercent = (Double(correctAnswers) / Double(totalAnswers)) * percentageDivisor
-        return resultPercent
+    func showResultModule() {
+        guard let coordinator = coordinator as? QuizSessionCoordinator else { return }
+        let sessionResult = gameSession.returnSessionResults()
+        coordinator.showQuizResult(quizResultModel: sessionResult)
     }
 }

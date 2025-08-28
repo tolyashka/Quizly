@@ -17,15 +17,23 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let window = UIWindow(windowScene: scene)
         let navigationController = UINavigationController()
         
-        let configService = QuestionConfigService(configuratorManager: ConfiguratorManager())
-        let configProvider = ActiveConfigProvider(configService: configService)
-        let resultService = QuizResultService(configProvider: configProvider)
-
-        let dataService = DataService(configService: configService, resultService: resultService)
+        let configurationStorage = ConfigurationStorage()
+        let defaultAPIModel = QuestionSectionFactory().makeSections()
+        
+        let configurationSaver = ConfiguratorSaver(configurationStorage: configurationStorage)
+        let configirationSelectable = ConfigurationSelector(configurationStorage: configurationStorage, sections: defaultAPIModel)
+        
+        let dataService = DataService()
 
         let networkManager = NetworkManager(networkClient: NetworkClient(), urlConfigurator: URLConfigurator(urlString: baseURL))
         
-        coordinator = ApplicaionCoordinator(window: window, navigationController: navigationController, networkManager: networkManager, dataService: dataService)
+        coordinator = ApplicaionCoordinator(window: window,
+                                            navigationController: navigationController,
+                                            networkManager: networkManager,
+                                            dataService: dataService,
+                                            configurationSaver: configurationSaver,
+                                            selectableConfigurator: configirationSelectable,
+                                            defaultAPIModel: defaultAPIModel)
         
         coordinator?.start()
     }

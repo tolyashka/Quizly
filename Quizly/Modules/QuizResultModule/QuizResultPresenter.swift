@@ -29,7 +29,7 @@ final class QuizResultPresenter: IQuizResultPresenter {
         view.showScoreText(
             QuizResultConstants.ResultPresenter.showScoreText(
                 score: quizResultModel.score,
-                total: quizResultModel.total,
+                total: quizResultModel.questionsCount,
                 percent: quizResultModel.percent
             ).title
         )
@@ -42,6 +42,6 @@ final class QuizResultPresenter: IQuizResultPresenter {
     }
     
     private func saveResults() {
-        dataService.saveQuizResult(quizResultModel)
+        dataService.addResult(quizResultModel)
     }
 }

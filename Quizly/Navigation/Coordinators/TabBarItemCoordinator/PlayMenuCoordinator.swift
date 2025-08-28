@@ -14,12 +14,25 @@ final class PlayMenuCoordinator: Coordinator {
     
     private let networkManager: INetworkManager
     private let dataService: IDataService
-    // MARK: - Initialize PlayMenuCoordinator
+    private let questionConfigurator: SelectableConfigurator
+    private let savableConfigurator: SavableConfigurator
+    private let configurationNotificationCenter: QuestionConfigurationEvent
+    private let questionModel : [QuestionSectionViewModel]
     
-    init(navigationController: UINavigationController, networkManager: INetworkManager, dataService: IDataService) {
+    init(navigationController: UINavigationController,
+         networkManager: INetworkManager,
+         questionConfigurator: SelectableConfigurator,
+         savableConfigurator: SavableConfigurator,
+         configurationNotificationCenter: QuestionConfigurationEvent,
+         questionModel: [QuestionSectionViewModel],
+         dataService: IDataService) {
         self.navigationController = navigationController
         self.networkManager = networkManager
+        self.questionConfigurator = questionConfigurator
+        self.savableConfigurator = savableConfigurator
+        self.configurationNotificationCenter = configurationNotificationCenter
         self.dataService = dataService
+        self.questionModel = questionModel
     }
     
     func start() {
@@ -27,14 +40,20 @@ final class PlayMenuCoordinator: Coordinator {
     }
     
     func showConfigurationQuestionDetail() {
-        let configurationQuestionCoordinator = ConfigurationQuestionCoordinator(navigationController: navigationController)
+        let configurationQuestionCoordinator = ConfigurationQuestionCoordinator(
+            navigationController: navigationController,
+            questionConfigurator: questionConfigurator,
+            savableConfigurator: savableConfigurator,
+            configurationNotificationCenter: configurationNotificationCenter,
+            questionModel: questionModel
+        )
         configurationQuestionCoordinator.parentCoordinator = self
         childCoordinators.append(configurationQuestionCoordinator)
         configurationQuestionCoordinator.start()
     }
     
-    func updateQuestionsConfigurations(with configurations: [QuestionSection: QuestionItemViewModel]?) {
-        let resultConfiguration = configurations?.values.compactMap { $0.queryItem }
+    func updateQuestionsConfigurations(with configurations: [QuestionItemViewModel]) {
+        let resultConfiguration = configurations.compactMap { $0.queryItem }
         networkManager.createURLConfiguration(with: resultConfiguration)
     }
     
@@ -42,7 +61,8 @@ final class PlayMenuCoordinator: Coordinator {
         let coordinator = LoadQuestionCoordinator(
             navigationController: navigationController,
             netwowrkManager: networkManager,
-            dataService: dataService
+            dataService: dataService,
+            savedConfiguration: savableConfigurator
         )
         
         coordinator.parentCoordinator = self
@@ -54,7 +74,13 @@ final class PlayMenuCoordinator: Coordinator {
 // MARK: - Presentation play module
 private extension PlayMenuCoordinator {
     func showModule() {
-        let presenter = MenuPresenter(coordinator: self, dataService: dataService)
+        let presenter = MenuPresenter(
+            coordinator: self,
+            questionConfigurator: questionConfigurator,
+            dataService: dataService,
+            savableConfigurator: savableConfigurator,
+            configurationNotificationCenter: configurationNotificationCenter
+        )
         let viewController = MenuViewController(presenter: presenter)
         navigationController.pushViewController(viewController, animated: true)
     }
