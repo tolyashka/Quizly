@@ -1,5 +1,3 @@
-<img width="1206" height="2622" alt="Simulator Screenshot - Iphone 16 pro - 2025-08-31 at 15 36 09" src="https://github.com/user-attachments/assets/2c1a1aa0-2b91-4feb-b80c-9df4cf28b0f5" /># QUIZLY
-
 ## Описание
 
 **Quizly** — мобильное приложение-викторина, разработанное под операционную систему iOS.
@@ -53,7 +51,7 @@
 - Выбор конкретной области вопросов, количества вопросов в игровой сессии, сложность вопросов и тип ответов.  
 - Сохранение выбранной конфигурации вопросов
 
-<img src="https://github.com/user-attachments/assets/8103c3e1-7442-442a-984b-17310ac96503" width="400"/>
+<img src="https://github.com/user-attachments/assets/8103c3e1-7442-442a-984b-17310ac96503" width="250"/>
 
 ### Экран 3 ("Загрузка игровой сессии")
 - Получение вопросов для игровой сессии.
@@ -61,8 +59,8 @@
 - Отображение ошибки в случае ошибки в получении данных для викторины.
 
 <p>
-  <img src="https://github.com/user-attachments/assets/e0e3eecd-87c6-458f-9983-c843b24e7575" width="400" />
-  <img src="https://github.com/user-attachments/assets/5b0d295b-846a-473b-96fb-2e9ce65315f1" width="400" />
+  <img src="https://github.com/user-attachments/assets/e0e3eecd-87c6-458f-9983-c843b24e7575" width="250" />
+  <img src="https://github.com/user-attachments/assets/5b0d295b-846a-473b-96fb-2e9ce65315f1" width="250" />
 </p>
 
 ### Экран 4 ("Игровая сессия")
@@ -72,21 +70,21 @@
 - Возможноть узнать результат выбранного ответа.  
 - Просмотр текущей прогрессии игровой сессии.
 
-<img src="https://github.com/user-attachments/assets/1120a532-ff32-4c52-8a31-75008bb9f617" width="400"/>
-<img width="400" height="400" alt="Simulator Screenshot - Iphone 16 pro - 2025-08-31 at 15 35 10" src="https://github.com/user-attachments/assets/aec429d2-9745-49e0-840c-23b6e65d1f6d" />
+<img src="https://github.com/user-attachments/assets/1120a532-ff32-4c52-8a31-75008bb9f617" width="250"/>
+<img width="250" height="700" alt="Simulator Screenshot - Iphone 16 pro - 2025-08-31 at 15 35 10" src="https://github.com/user-attachments/assets/aec429d2-9745-49e0-840c-23b6e65d1f6d" />
 
 ### Экран 5 ("Результат игровой сессии")
 
 - Просмотр результатов завершенной игровой сессии.  
 - Переход на "Главный экран" приложения.
 
-<img src="https://github.com/user-attachments/assets/5c59c4f5-a383-421c-acbf-b06454e913d7" width="400"/>
+<img src="https://github.com/user-attachments/assets/5c59c4f5-a383-421c-acbf-b06454e913d7" width="250"/>
 
 ### Экран 6 ("Результат игровой сессии")
 
 - Просмотр результатов викторин
   
-<img width="400" height="400" alt="Simulator Screenshot - Iphone 16 pro - 2025-08-31 at 15 50 32" src="https://github.com/user-attachments/assets/84db2d28-79ad-413d-9f6d-f5ad65df18a4" />
+<img width="250" height="600" alt="Simulator Screenshot - Iphone 16 pro - 2025-08-31 at 15 50 32" src="https://github.com/user-attachments/assets/84db2d28-79ad-413d-9f6d-f5ad65df18a4" />
 
 ## Планы развития
 - Локальные уведомления: устанавливать напоминания для пользователя ставновиться еще умнее и эрудированнее :) 
